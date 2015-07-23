@@ -22,7 +22,12 @@ t16 = "var a = 3, a = 4, c = 4; a + b"
 t17 = "var a = 3; var b = 8; var a = b, b = a; a + b" 
 t18 = "var x = 1; var y = 3; x * x * x * y"
 t19 = "var x = 3, x = 5 * x; var y = 2; y * x"
-
+t20 = "var x = 15, x = x + x; var y = 63; x"
+t21 = "var x = 15, x = x + x; var y = 63; y"
+t22 = "var x = 15, x = x + x; var y = 63; x * y"
+t23 = "var a = 8, a = 11, c = 14; a + c * b"
+t24 = "var x = 4; var y = 6; x * y"
+t25 = "var x = 4; var y = 6; var x = 2; x"
 
 test1 = do
   test "execute" execute (parseExp t1)
@@ -44,6 +49,12 @@ test1 = do
   test "execute" execute (parseExp t17)
   test "execute" execute (parseExp t18)
   test "execute" execute (parseExp t19)
+  test "execute" execute (parseExp t20)
+  test "execute" execute (parseExp t21)
+  test "execute" execute (parseExp t22)
+  test "execute" execute (parseExp t23)
+  test "execute" execute (parseExp t24)
+  test "execute" execute (parseExp t25)
 
 main = do
   tagged "DeclTest1" test1
