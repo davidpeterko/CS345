@@ -31,13 +31,12 @@ evaluate (Divide a b) env    = evaluate a env `div` evaluate b env
 evaluate (Variable x) env    = fromJust (lookup x env)
 --evaluate (Declare x exp body) env = evaluate body newEnv
   --where newEnv = (x, evaluate exp env) : env
-
 evaluate (Declare declarations body) env = 
     --if checkduplicate declarations
     --then error "Can't have duplicates."
     --else evaluate body newEnv
     evaluate body newEnv
-    where newEnv = ([(str, evaluate expr env) | (str, expr) <- declarations])
+    where newEnv = ([(str, evaluate expr env) | (str, expr) <- declarations]) ++ env
 
     --where newEnv = env ++ (x, evaluate y env)
     --  x = [a | (a, b) <- declarations]
@@ -55,11 +54,13 @@ instance Show Exp where
 
 showExp level (Number i)      = show i
 showExp level (Variable x)    = x
--- need to fix this
-showExp level (Declare declarations body)
-  if declarations == []
-  then ", "
-  else (show (fst declarations)) ++ ", " ++ level (tail declarations)
+showExp level (Declare (ele : declist) b) =
+  if level > 0 then paren result else result
+  where result = "var " ++ (fst(ele)) ++ " = " ++ showExp 0 (snd(ele)) ++ "; " ++ showExp 0 b  
+
+-- this showExp level takes in each element of the declist and then prints out in a syntax:
+-- wher var <the first element> = <second element> ---- you use the function fst and snd to grab those values from each tuple from ele : declist
+-- then showExp 0 b speads out the rest of the body
 --showExp level (Declare x a b) = 
   -- if level > 0 then paren result else result
     -- where result = "var " ++ x ++ " = " ++ showExp 0 a ++ "; " ++ showExp 0 b
