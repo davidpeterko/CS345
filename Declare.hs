@@ -56,7 +56,10 @@ instance Show Exp where
 showExp level (Number i)      = show i
 showExp level (Variable x)    = x
 -- need to fix this
---showExp level (Declare declarations body)
+showExp level (Declare declarations body)
+  if declarations == []
+  then ", "
+  else (show (fst declarations)) ++ ", " ++ level (tail declarations)
 --showExp level (Declare x a b) = 
   -- if level > 0 then paren result else result
     -- where result = "var " ++ x ++ " = " ++ showExp 0 a ++ "; " ++ showExp 0 b
