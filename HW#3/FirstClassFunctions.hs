@@ -7,7 +7,8 @@ import Operators
 
 data Value = IntV  Int
            | BoolV Bool
-           | ClosureV String Exp Env  -- new
+           | ClosureV Pattern Exp Env  -- new, modified to assignment page, functions have patterns
+		   | TupleV [Value]		  	   -- added from assignment page,  tuple value
   deriving (Eq, Show)
 
 data Exp = Literal   Value
@@ -15,12 +16,24 @@ data Exp = Literal   Value
          | Binary    BinaryOp Exp Exp
          | If        Exp Exp Exp
          | Variable  String
-         | Declare   String Exp Exp
-         | Function  String Exp      -- new
          | Call      Exp Exp         -- changed
-  deriving (Eq)
+		 | Declare	 Pattern Exp Exp -- declarations bind using patterns 
+		 | Function Pattern Exp		 -- functions have patterns
+		 | Tuple [Exp] 				 -- tuple expressions
+  deriving (Eq, Show)
+
+data Pattern = VarP String           -- variable patterns
+			 | TupleP [Pattern]		 -- tuple patterns
+  deriving (Eq, Show)
   
 type Env = [(String, Value)]
+
+
+-- new function to check matches
+match :: Pattern -> Value -> Env					-- takes in a pattern and value and returns an env
+-- function specifics here?
+
+
 
 evaluate :: Exp -> Env -> Value
 evaluate (Literal v) env = v
