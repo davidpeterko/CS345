@@ -8,7 +8,7 @@ import Operators
 data Value = IntV  Int
            | BoolV Bool
            | ClosureV Pattern Exp Env  -- new, modified to assignment page, functions have patterns
-		   | TupleV [Value]		  	   -- added from assignment page,  tuple value
+		       | TupleV [Value]		  	   -- added from assignment page,  tuple value
   deriving (Eq, Show)
 
 data Exp = Literal   Value
@@ -17,22 +17,27 @@ data Exp = Literal   Value
          | If        Exp Exp Exp
          | Variable  String
          | Call      Exp Exp         -- changed
-		 | Declare	 Pattern Exp Exp -- declarations bind using patterns 
-		 | Function Pattern Exp		 -- functions have patterns
-		 | Tuple [Exp] 				 -- tuple expressions
+		     | Declare	 Pattern Exp Exp -- declarations bind using patterns 
+		     | Function Pattern Exp		 -- functions have patterns
+		     | Tuple [Exp] 				 -- tuple expressions
   deriving (Eq, Show)
 
 data Pattern = VarP String           -- variable patterns
-			 | TupleP [Pattern]		 -- tuple patterns
+			    | TupleP [Pattern]		 -- tuple patterns
   deriving (Eq, Show)
   
 type Env = [(String, Value)]
 
-
--- new function to check matches
-match :: Pattern -> Value -> Env					-- takes in a pattern and value and returns an env
--- function specifics here?
-
+-- helper function to call on pattern we get in function and call
+-- it takes two args and turns them into a Env.
+pattern_match :: Pattern -> Value -> Env
+-- As with most functions you have a base case and the recursion.
+-- You are taking the TupleP and TupleV and concatenating them into a new Env using the zip call in Haskell basically. That should handle Call and Function.
+-- base case, empty tupleP and tupleV
+match (TupleP []) (TupleV []) = [] 
+match (VarP varname) value) = (VarP varname, value) : [] 
+match (TupleP patterntup) (TupleV valuetup) = 
+  match (TupleP (tail patterntup)) (TupleV (tail valuetup)) ++ match (head patterntup) (head valuetup)
 
 
 evaluate :: Exp -> Env -> Value
@@ -52,17 +57,25 @@ evaluate (If a b c) env =
 evaluate (Variable x) env = fromJust (lookup x env)
 
 evaluate (Declare x exp body) env = evaluate body newEnv
-  where newEnv = (x, evaluate exp env) : env
+  --where newEnv = (x, evaluate exp env) : env
+  where newEnv = (match x (evaluate exp env)) ++ env
 
 evaluate (Function x body) env = ClosureV x body env     -- new
 
 evaluate (Call fun arg) env = evaluate body newEnv    -- changed
   where ClosureV x body closeEnv = evaluate fun env
-        newEnv = (x, evaluate arg env) : closeEnv
+        -- newEnv = (x, evaluate arg env) : closeEnv
+        newEnv = (match x (evaluate arg env)) ++ closeEnv ?
+
+-- add evaluate for tuple
+-- evaluate expres in the env, grab expre from tuple
+evaluate (Tuple x) env = TupleV [ evaluate expre env | expre <- x]
 
 execute exp = evaluate exp []
 
 -- Code to display expressions
+
+-- need to modify the Show Exp function  ?
 
 instance Show Exp where
   show e = "[" ++ showExp 0 e ++ "]"
