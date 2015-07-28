@@ -7,8 +7,8 @@ import Operators
 
 data Value = IntV  Int
            | BoolV Bool
-           | ClosureV Pattern Exp Env  -- new, modified to assignment page, functions have patterns
-		       | TupleV [Value]		  	   -- added from assignment page,  tuple value
+           | ClosureV Pattern Exp Env  -- new
+		       | TupleV [Value]		   
   deriving (Eq, Show)
 
 data Exp = Literal   Value
@@ -35,7 +35,7 @@ type Env = [(String, Value)]
 bind :: Pattern -> Value -> Env
 -- You are taking the TupleP and TupleV and concatenating them into a new Env using the zip call in Haskell basically. That should handle Call and Function.
 bind (TupleP []) (TupleV []) = [] 
-bind (VarP n) v = (VarP n, v) : [] 
+bind (VarP n) v = [(VarP n, v)] 
 bind (TupleP ps) (TupleV vs) = 
   --match (TupleP (tail patterntup)) (TupleV (tail valuetup)) ++ match (head patterntup) (head valuetup)
 	concat [ bind p v | (p, v) <- zip ps vs]
@@ -61,14 +61,14 @@ evaluate (Variable x) env = fromJust (lookup x env)
 
 evaluate (Declare x exp body) env = evaluate body newEnv
   --where newEnv = (x, evaluate exp env) : env
-  where newEnv = (bind x (evaluate exp env)) ++ env
+  where newEnv = bind x (evaluate exp env) ++ env
 
 evaluate (Function x body) env = ClosureV x body env     -- new
 
 evaluate (Call fun arg) env = evaluate body newEnv    -- changed
   where ClosureV x body closeEnv = evaluate fun env
         -- newEnv = (x, evaluate arg env) : closeEnv
-        newEnv = (bind x (evaluate arg env)) ++ closeEnv
+        newEnv = bind x (evaluate arg env) ++ closeEnv
 
 -- add evaluate for tuple
 evaluate (Tuple x) env = TupleV [ evaluate expre env | expre <- x]
