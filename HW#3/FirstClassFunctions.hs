@@ -28,16 +28,19 @@ data Pattern = VarP String           -- variable patterns
   
 type Env = [(String, Value)]
 
--- helper function to call on pattern we get in function and call
--- it takes two args and turns them into a Env.
-pattern_match :: Pattern -> Value -> Env
--- As with most functions you have a base case and the recursion.
+
+
+
+-- Helper function from class, takes a pattern and value -> env
+bind :: Pattern -> Value -> Env
 -- You are taking the TupleP and TupleV and concatenating them into a new Env using the zip call in Haskell basically. That should handle Call and Function.
--- base case, empty tupleP and tupleV
-match (TupleP []) (TupleV []) = [] 
-match (VarP varname) value) = (VarP varname, value) : [] 
-match (TupleP patterntup) (TupleV valuetup) = 
-  match (TupleP (tail patterntup)) (TupleV (tail valuetup)) ++ match (head patterntup) (head valuetup)
+bind (TupleP []) (TupleV []) = [] 
+bind (VarP n) v = (VarP n, v) : [] 
+bind (TupleP ps) (TupleV vs) = 
+  --match (TupleP (tail patterntup)) (TupleV (tail valuetup)) ++ match (head patterntup) (head valuetup)
+	concat [ bind p v | (p, v) <- zip ps vs]
+
+-- End helper function
 
 
 evaluate :: Exp -> Env -> Value
@@ -58,24 +61,21 @@ evaluate (Variable x) env = fromJust (lookup x env)
 
 evaluate (Declare x exp body) env = evaluate body newEnv
   --where newEnv = (x, evaluate exp env) : env
-  where newEnv = (match x (evaluate exp env)) ++ env
+  where newEnv = (bind x (evaluate exp env)) ++ env
 
 evaluate (Function x body) env = ClosureV x body env     -- new
 
 evaluate (Call fun arg) env = evaluate body newEnv    -- changed
   where ClosureV x body closeEnv = evaluate fun env
         -- newEnv = (x, evaluate arg env) : closeEnv
-        newEnv = (match x (evaluate arg env)) ++ closeEnv ?
+        newEnv = (bind x (evaluate arg env)) ++ closeEnv
 
 -- add evaluate for tuple
--- evaluate expres in the env, grab expre from tuple
 evaluate (Tuple x) env = TupleV [ evaluate expre env | expre <- x]
 
 execute exp = evaluate exp []
 
 -- Code to display expressions
-
--- need to modify the Show Exp function  ?
 
 instance Show Exp where
   show e = "[" ++ showExp 0 e ++ "]"

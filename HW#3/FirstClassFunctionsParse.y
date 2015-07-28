@@ -46,15 +46,15 @@ Exp : function '(' id ')' '{' Exp '}'  		{ Function $3 $6 }
     | if '(' Exp ')' Exp ';' else Exp  		{ If $3 $5 $8 }
     | Or                               		{ $1 }
 	
-ExprList : Exp						   		{ [$1] }
-		 | ExpList ',' Exp			   		{ $1 ++ [$3] }
+ExpList : Exp						   		{ [$1] }
+		| Exp ',' ExpList			   		{ $1 : [$3] }
 
 Pattern : id						   		{ VarP $1}
 		| '(' Pattern ')'			   		{ $2 }
 		| '(' PList ')'				   		{ TupleP $2}
 
 PList : Pattern 					   		{ [$1] }
-	  | PList ',' Pattern       	   		{ $1 ++ [$3] }
+	  | Pattern ',' PList       	   		{ $1 : [$3] }
 
 Or   : Or '||' And       					{ Binary Or $1 $3 }
      | And                					{ $1 }
