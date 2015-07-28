@@ -8,7 +8,7 @@ import Operators
 data Value = IntV  Int
            | BoolV Bool
            | ClosureV Pattern Exp Env  -- new
-		       | TupleV [Value]		   
+		   | TupleV [Value]		   
   deriving (Eq, Show)
 
 data Exp = Literal   Value
@@ -17,13 +17,13 @@ data Exp = Literal   Value
          | If        Exp Exp Exp
          | Variable  String
          | Call      Exp Exp         -- changed
-		     | Declare	 Pattern Exp Exp -- declarations bind using patterns 
-		     | Function Pattern Exp		 -- functions have patterns
-		     | Tuple [Exp] 				 -- tuple expressions
+		 | Declare	 Pattern Exp Exp -- declarations bind using patterns 
+		 | Function Pattern Exp		 -- functions have patterns
+		 | Tuple [Exp] 				 -- tuple expressions
   deriving (Eq, Show)
 
 data Pattern = VarP String           -- variable patterns
-			    | TupleP [Pattern]		 -- tuple patterns
+			 | TupleP [Pattern]		 -- tuple patterns
   deriving (Eq, Show)
   
 type Env = [(String, Value)]
@@ -35,7 +35,7 @@ type Env = [(String, Value)]
 bind :: Pattern -> Value -> Env
 -- You are taking the TupleP and TupleV and concatenating them into a new Env using the zip call in Haskell basically. That should handle Call and Function.
 bind (TupleP []) (TupleV []) = [] 
-bind (VarP n) v = [(VarP n, v)] 
+bind (VarP n) v = [(n, v)] 
 bind (TupleP ps) (TupleV vs) = 
   --match (TupleP (tail patterntup)) (TupleV (tail valuetup)) ++ match (head patterntup) (head valuetup)
 	concat [ bind p v | (p, v) <- zip ps vs]
@@ -77,25 +77,33 @@ execute exp = evaluate exp []
 
 -- Code to display expressions
 
-instance Show Exp where
-  show e = "[" ++ showExp 0 e ++ "]"
+--instance Show Exp where
+  --show e = "[" ++ showExp 0 e ++ "]"
 
 showExp level (Literal i)      = show i
+
 showExp level (Variable x)    = x
+
 showExp level (Declare x a b) = 
   if level > 0 then paren result else result
     where result = "var " ++ x ++ " = " ++ showExp 0 a ++ "; " ++ showExp 0 b
+
 showExp level (If a b c)    = 
   if level > 0 then paren result else result
     where result = "if (" ++ showExp 0 a ++ ") " ++ showExp 0 b ++ " else " ++ showExp 0 c
+
 showExp level (Unary Neg a)    = "-" ++ showExp 99 a
+
 showExp level (Unary Not a)    = "!" ++ showExp 99 a
+
 showExp level (Binary op a b)  = showBinary level (fromJust (lookup op levels)) a (fromJust (lookup op names)) b
   where levels = [(Or, 1), (And, 2), (GT, 3), (LT, 3), (LE, 3), (GE, 3), (EQ, 3), 
                   (Add, 4), (Sub, 4), (Mul, 5), (Div, 5)] 
         names = [(Or, "||"), (And, "&&"), (GT, ">"), (LT, "<"), (LE, "<="), (GE, ">="), (EQ, "=="), 
                   (Add, "+"), (Sub, "-"), (Mul, "*"), (Div, "/")] 
+
 showExp level (Function x body)    = "function(" ++ x ++ ") {" ++ showExp 0 body ++ "}"
+
 showExp level (Call fun arg)    = showExp 6 fun ++ "(" ++ showExp 0 arg ++ ")"
 
 showBinary outer inner a op b =

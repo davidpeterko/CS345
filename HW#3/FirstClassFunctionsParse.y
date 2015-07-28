@@ -47,14 +47,14 @@ Exp : function '(' id ')' '{' Exp '}'  		{ Function $3 $6 }
     | Or                               		{ $1 }
 	
 ExpList : Exp						   		{ [$1] }
-		| Exp ',' ExpList			   		{ $1 : [$3] }
+		| Exp ',' ExpList			   		{ $1 : $3 }
 
 Pattern : id						   		{ VarP $1}
 		| '(' Pattern ')'			   		{ $2 }
 		| '(' PList ')'				   		{ TupleP $2}
 
 PList : Pattern 					   		{ [$1] }
-	  | Pattern ',' PList       	   		{ $1 : [$3] }
+	  | Pattern ',' PList       	   		{ $1 : $3 }
 
 Or   : Or '||' And       					{ Binary Or $1 $3 }
      | And                					{ $1 }
@@ -84,11 +84,11 @@ Primary : Primary '(' Exp ')' 				{ Call $1 $3 }
         | '-' Primary    					{ Unary Neg $2 }
         | '!' Primary   					{ Unary Not $2 }
         | id             					{ Variable $1 }
-        | '(' Exp ')'    					{ $2 }
+        | '(' ExpList ')'    					{ Tuple $2 }
 
 {
 
-symbols = ["+", "-", "*", "/", "(", ")", "{", "}", ";", "==", "=", "<=", ">=", "<", ">", "||", "&&", "!"]
+symbols = ["+", "-", "*", "/", "(", ")", "{", "}", ";", "==", "=", "<=", ">=", "<", ">", "||", "&&", "!",","]
 keywords = ["function", "var", "if", "else", "true", "false"]
 parseExp str = parser (lexer symbols keywords str)
 
