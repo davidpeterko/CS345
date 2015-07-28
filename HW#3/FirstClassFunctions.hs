@@ -86,7 +86,7 @@ showExp level (Variable x)    = x
 
 showExp level (Declare x a b) = 
   if level > 0 then paren result else result
-    where result = "var " ++ x ++ " = " ++ showExp 0 a ++ "; " ++ showExp 0 b
+    where result = "var " ++ show x ++ " = " ++ showExp 0 a ++ "; " ++ showExp 0 b
 
 showExp level (If a b c)    = 
   if level > 0 then paren result else result
@@ -102,7 +102,7 @@ showExp level (Binary op a b)  = showBinary level (fromJust (lookup op levels)) 
         names = [(Or, "||"), (And, "&&"), (GT, ">"), (LT, "<"), (LE, "<="), (GE, ">="), (EQ, "=="), 
                   (Add, "+"), (Sub, "-"), (Mul, "*"), (Div, "/")] 
 
-showExp level (Function x body)    = "function(" ++ x ++ ") {" ++ showExp 0 body ++ "}"
+showExp level (Function x body)    = "function(" ++ show x ++ ") {" ++ showExp 0 body ++ "}"
 
 showExp level (Call fun arg)    = showExp 6 fun ++ "(" ++ showExp 0 arg ++ ")"
 
