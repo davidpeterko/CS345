@@ -5,8 +5,10 @@ import Data.Char
 import FirstClassFunctions
 import Lexer
 import Operators
+import Control.Applicative(Applicative(..))
+import Control.Monad (ap)
 
--- parser produced by Happy Version 1.19.0
+-- parser produced by Happy Version 1.19.5
 
 data HappyAbsSyn t4 t5 t6 t7 t8 t9 t10 t11 t12 t13
 	= HappyTerminal (Token)
@@ -900,6 +902,12 @@ newtype HappyIdentity a = HappyIdentity a
 happyIdentity = HappyIdentity
 happyRunIdentity (HappyIdentity a) = a
 
+instance Functor HappyIdentity where
+    fmap f (HappyIdentity a) = HappyIdentity (f a)
+
+instance Applicative HappyIdentity where
+    pure  = return
+    (<*>) = ap
 instance Monad HappyIdentity where
     return = HappyIdentity
     (HappyIdentity p) >>= q = q p
@@ -929,15 +937,9 @@ parseInput = do
   print (parseExp input)
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
-{-# LINE 1 "<command-line>" #-}
-
-
-
-
-
-# 1 "/usr/include/stdc-predef.h" 1 3 4
-
-# 17 "/usr/include/stdc-predef.h" 3 4
+{-# LINE 1 "<built-in>" #-}
+{-# LINE 16 "<built-in>" #-}
+{-# LINE 1 "/usr/local/Cellar/ghc/7.10.1_1/lib/ghc-7.10.1/include/ghcversion.h" #-}
 
 
 
@@ -952,37 +954,19 @@ parseInput = do
 
 
 
-# 1 "/usr/include/x86_64-linux-gnu/bits/predefs.h" 1 3 4
-
-# 18 "/usr/include/x86_64-linux-gnu/bits/predefs.h" 3 4
 
 
 
 
-
-
-
-
-
-
-
-
-# 31 "/usr/include/stdc-predef.h" 2 3 4
-
-
-
-
-
-
-
-
-# 5 "<command-line>" 2
+{-# LINE 17 "<built-in>" #-}
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp 
 
+
 {-# LINE 13 "templates/GenericTemplate.hs" #-}
 
-{-# LINE 45 "templates/GenericTemplate.hs" #-}
+
+{-# LINE 46 "templates/GenericTemplate.hs" #-}
 
 
 
@@ -991,11 +975,20 @@ parseInput = do
 
 
 
-{-# LINE 66 "templates/GenericTemplate.hs" #-}
 
-{-# LINE 76 "templates/GenericTemplate.hs" #-}
+{-# LINE 67 "templates/GenericTemplate.hs" #-}
 
-{-# LINE 85 "templates/GenericTemplate.hs" #-}
+
+{-# LINE 77 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
+
 
 infixr 9 `HappyStk`
 data HappyStk a = HappyStk a (HappyStk a)
@@ -1012,14 +1005,15 @@ happyParse start_state = happyNewToken start_state notHappyAtAll notHappyAtAll
 -- parse (a %partial parser).  We must ignore the saved token on the top of
 -- the stack in this case.
 happyAccept (1) tk st sts (_ `HappyStk` ans `HappyStk` _) =
-	happyReturn1 ans
+        happyReturn1 ans
 happyAccept j tk st sts (HappyStk ans _) = 
-	 (happyReturn1 ans)
+         (happyReturn1 ans)
 
 -----------------------------------------------------------------------------
 -- Arrays only: do the next action
 
-{-# LINE 154 "templates/GenericTemplate.hs" #-}
+
+{-# LINE 155 "templates/GenericTemplate.hs" #-}
 
 -----------------------------------------------------------------------------
 -- HappyState data type (not arrays)
@@ -1076,9 +1070,9 @@ happyReduce k i fn (1) tk st sts stk
      = happyFail (1) tk st sts stk
 happyReduce k nt fn j tk st sts stk
      = case happyDrop (k - ((1) :: Int)) sts of
-	 sts1@(((st1@(HappyState (action))):(_))) ->
-        	let r = fn stk in  -- it doesn't hurt to always seq here...
-       		happyDoSeq r (action nt j tk st1 sts1 r)
+         sts1@(((st1@(HappyState (action))):(_))) ->
+                let r = fn stk in  -- it doesn't hurt to always seq here...
+                happyDoSeq r (action nt j tk st1 sts1 r)
 
 happyMonadReduce k nt fn (1) tk st sts stk
      = happyFail (1) tk st sts stk
@@ -1113,7 +1107,14 @@ happyDropStk n (x `HappyStk` xs) = happyDropStk (n - ((1)::Int)) xs
 -----------------------------------------------------------------------------
 -- Moving to a new state after a reduction
 
-{-# LINE 255 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
 happyGoto action j tk st = action j j tk (HappyState action)
 
 
@@ -1123,7 +1124,7 @@ happyGoto action j tk st = action j j tk (HappyState action)
 -- parse error if we are in recovery and we fail again
 happyFail (1) tk old_st _ stk@(x `HappyStk` _) =
      let i = (case x of { HappyErrorToken (i) -> i }) in
---	trace "failing" $ 
+--      trace "failing" $ 
         happyError_ i tk
 
 {-  We don't need state discarding for our restricted implementation of
@@ -1132,16 +1133,16 @@ happyFail (1) tk old_st _ stk@(x `HappyStk` _) =
 
 -- discard a state
 happyFail  (1) tk old_st (((HappyState (action))):(sts)) 
-						(saved_tok `HappyStk` _ `HappyStk` stk) =
---	trace ("discarding state, depth " ++ show (length stk))  $
-	action (1) (1) tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
+                                                (saved_tok `HappyStk` _ `HappyStk` stk) =
+--      trace ("discarding state, depth " ++ show (length stk))  $
+        action (1) (1) tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
 -}
 
 -- Enter error recovery: generate an error token,
 --                       save the old token and carry on.
 happyFail  i tk (HappyState (action)) sts stk =
 --      trace "entering error recovery" $
-	action (1) (1) tk (HappyState (action)) sts ( (HappyErrorToken (i)) `HappyStk` stk)
+        action (1) (1) tk (HappyState (action)) sts ( (HappyErrorToken (i)) `HappyStk` stk)
 
 -- Internal happy errors:
 
@@ -1159,9 +1160,9 @@ notHappyAtAll = error "Internal Happy error\n"
 
 -----------------------------------------------------------------------------
 -- Seq-ing.  If the --strict flag is given, then Happy emits 
---	happySeq = happyDoSeq
+--      happySeq = happyDoSeq
 -- otherwise it emits
--- 	happySeq = happyDontSeq
+--      happySeq = happyDontSeq
 
 happyDoSeq, happyDontSeq :: a -> b -> b
 happyDoSeq   a b = a `seq` b
@@ -1172,7 +1173,14 @@ happyDontSeq a b = b
 -- of deciding to inline happyGoto everywhere, which increases the size of
 -- the generated parser quite a bit.
 
-{-# LINE 321 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
 {-# NOINLINE happyShift #-}
 {-# NOINLINE happySpecReduce_0 #-}
 {-# NOINLINE happySpecReduce_1 #-}
@@ -1184,3 +1192,4 @@ happyDontSeq a b = b
 {-# NOINLINE happyFail #-}
 
 -- end of Happy Template.
+
