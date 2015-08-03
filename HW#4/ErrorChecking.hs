@@ -43,6 +43,9 @@ evaluate (If x y z) env =
 -- non-recursive var
 -- what to do here? is this for declares?
 
+
+-- function call / definitions
+
 -- function definition
 evaluate (Fun arg body) env = 
   Good (ClosureV arg body env)
