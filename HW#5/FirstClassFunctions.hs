@@ -18,6 +18,7 @@ data Exp = Literal   Value
          | Declare   String Exp Exp
          | Function  String Exp      -- new
          | Call      Exp Exp         -- changed
+		 | Try		 Exp Exp
   deriving (Eq)
   
 type Env = [(String, Value)]

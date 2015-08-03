@@ -7,25 +7,7 @@ import Operators
 data Checked a = Good a | Error String
   deriving Show
 
-data Value = IntV  Int
-           | BoolV Bool
-           | ClosureV String Exp Env  -- new
-  deriving (Eq, Show)
-
-data Exp = Literal   Value
-         | Unary     UnaryOp Exp
-         | Binary    BinaryOp Exp Exp
-         | If        Exp Exp Exp
-         | Variable  String
-         | Declare   String Exp Exp
-         | Function  String Exp      -- new
-         | Call      Exp Exp         -- changed
-		 | Try       Exp Exp         -- added
-  deriving (Eq)
-  
-type Env = [(String, Value)]
-
-
+--type Env = [(String, Value)]
 
 evaluate :: Exp -> Env -> Checked Value
 evaluate (Literal v) env = Good v
@@ -49,31 +31,47 @@ evaluate (Binary op a b) env =
 
 -- if x y z -> if x then y else z
 evaluate (If x y z) env =
-  case evaluate x env of
-    Error msg -> Error msg
-    Good xv ->let BoolV temp = xv in 
-      if temp
-      then case evaluate y env of
-        Error msg -> Error msg
-        Good yv -> Good yv
-      else case evaluate z env of
-        Error msg-> Error msg
-        Good zv -> Good zv
+  	case evaluate x env of
+    	Error msg -> Error msg
+    	Good xv -> let BoolV temp = xv in 
+      		if temp
+      			then case evaluate y env of
+       				Error msg -> Error msg
+        			Good yv -> Good yv
+      			else case evaluate z env of
+        			Error msg-> Error msg
+        			Good zv -> Good zv
 
--- non-recursive var
 -- what to do here? is this for declares?
-
+evaluate (Declare val exp body) env = 
+	case evaluate exp env of
+		Error msg -> Error msg
+		Good expv ->
+			evaluate body newEnv
+				where newEnv = (val, expv) : env
 
 -- function definition
-evaluate (Fun arg body) env = 
-  Good (ClosureV arg body env)
+evaluate (Function arg body) env = 
+	Good (ClosureV arg body env)
 
 -- function call
 evaluate (Call func arg) env = 
-
+	case evaluate func env of
+		Error msg -> Error msg
+		Good funcv ->
+			case evaluate arg env of
+			Error msg -> Error msg
+			Good argv ->
+				evaluate body newEnv
+				where
+					ClosureV x body closeEnv = funcv
+					newEnv = (x, argv) : closeEnv
 
 -- we need to implement 6.2 as well, a try catch syntax
-
+evaluate (Try x y) env = 
+	case evaluate x env of
+		Good xv -> Good xv
+		Error msg -> evaluate y env
 
 execute exp = evaluate exp []
 

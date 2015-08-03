@@ -39,7 +39,6 @@ import Operators
     '}'    { Symbol "}" }
 
 %token
-	function {TokenKeyword "function"}
 	try      { TokenKeyword "try" }
 	catch 	 { TokenKeyword "catch" }
 
