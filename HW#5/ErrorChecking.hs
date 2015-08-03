@@ -7,6 +7,26 @@ import Operators
 data Checked a = Good a | Error String
   deriving Show
 
+data Value = IntV  Int
+           | BoolV Bool
+           | ClosureV String Exp Env  -- new
+  deriving (Eq, Show)
+
+data Exp = Literal   Value
+         | Unary     UnaryOp Exp
+         | Binary    BinaryOp Exp Exp
+         | If        Exp Exp Exp
+         | Variable  String
+         | Declare   String Exp Exp
+         | Function  String Exp      -- new
+         | Call      Exp Exp         -- changed
+		 | Try       Exp Exp         -- added
+  deriving (Eq)
+  
+type Env = [(String, Value)]
+
+
+
 evaluate :: Exp -> Env -> Checked Value
 evaluate (Literal v) env = Good v
 evaluate (Variable x) env =
@@ -43,12 +63,17 @@ evaluate (If x y z) env =
 -- non-recursive var
 -- what to do here? is this for declares?
 
+
 -- function definition
 evaluate (Fun arg body) env = 
   Good (ClosureV arg body env)
 
 -- function call
-evaluate (Call func arg) env =   
+evaluate (Call func arg) env = 
+
+
+-- we need to implement 6.2 as well, a try catch syntax
+
 
 execute exp = evaluate exp []
 

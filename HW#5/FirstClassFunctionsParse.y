@@ -38,15 +38,22 @@ import Operators
     '{'    { Symbol "{" }
     '}'    { Symbol "}" }
 
+%token
+	function {TokenKeyword "function"}
+	try      { TokenKeyword "try" }
+	catch 	 { TokenKeyword "catch" }
+
+
 %nonassoc '!' PRE
 %nonassoc '('
 
 %%
 
-Exp : function '(' id ')' '{' Exp '}'  { Function $3 $6 }
-    | var id '=' Exp ';' Exp           { Declare $2 $4 $6 }
-    | if '(' Exp ')' Exp else Exp  { If $3 $5 $7 }
-    | Or                               { $1 }
+Exp : function '(' id ')' '{' Exp '}'        { Function $3 $6 }
+    | var id '=' Exp ';' Exp                 { Declare $2 $4 $6 }
+    | if '(' Exp ')' Exp else Exp            { If $3 $5 $7 }
+    | Or                                     { $1 }
+	| try '{' Exp '}' catch '{' Exp '}'      { Try $3 $7 }
 
 Or   : Or '||' And        { Binary Or $1 $3 }
      | And                { $1 }
