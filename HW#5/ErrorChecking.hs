@@ -43,12 +43,12 @@ evaluate (If x y z) env =
         			Good zv -> Good zv
 
 -- what to do here? is this for declares?
+-- non recursive var definition with declare
 evaluate (Declare val exp body) env = 
 	case evaluate exp env of
 		Error msg -> Error msg
-		Good expv ->
-			evaluate body newEnv
-				where newEnv = (val, expv) : env
+		Good expv -> evaluate body newEnv
+				where newEnv = env ++ [(val, expv)]         -- create newEnv with old + new tuple
 
 -- function definition
 evaluate (Function arg body) env = 
@@ -58,20 +58,21 @@ evaluate (Function arg body) env =
 evaluate (Call func arg) env = 
 	case evaluate func env of
 		Error msg -> Error msg
-		Good funcv ->
-			case evaluate arg env of
+		Good funcv -> case evaluate arg env of
 			Error msg -> Error msg
-			Good argv ->
-				evaluate body newEnv
+			Good argv -> evaluate body newEnv
 				where
-					ClosureV x body closeEnv = funcv
-					newEnv = (x, argv) : closeEnv
+					ClosureV val body closeEnv = funcv      -- need to amek new closure with new env
+					newEnv = closeEnv ++ [(val, argv)]      -- make newEnv with old closure and new tuple
 
 -- we need to implement 6.2 as well, a try catch syntax
+-- evaluate the first exp and return its value if it is good
+-- otherwise evaluate the second exp and return its value or an error
 evaluate (Try x y) env = 
 	case evaluate x env of
 		Good xv -> Good xv
 		Error msg -> evaluate y env
+		
 
 execute exp = evaluate exp []
 

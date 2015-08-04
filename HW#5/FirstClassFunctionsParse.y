@@ -87,7 +87,7 @@ Primary : Primary '(' Exp ')' { Call $1 $3 }
 {
 
 symbols = ["+", "-", "*", "/", "(", ")", "{", "}", ";", "==", "=", "<=", ">=", "<", ">", "||", "&&", "!"]
-keywords = ["function", "var", "if", "else", "true", "false"]
+keywords = ["function", "var", "if", "else", "true", "false", "try", "catch"]
 parseExp str = parser (lexer symbols keywords str)
 
 parseInput = do
