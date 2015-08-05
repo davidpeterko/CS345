@@ -43,7 +43,7 @@ evaluate (If x y z) env =
         			Good zv -> Good zv
 
 -- what to do here? is this for declares?
--- non recursive var definition with declare
+-- non recursive var definition with 
 evaluate (Declare val exp body) env = 
 	case evaluate exp env of
 		Error msg -> Error msg

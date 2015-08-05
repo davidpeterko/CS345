@@ -14,14 +14,14 @@ data CheckedStateful t = CST (Memory -> (Checked t, Memory))
 instance Monad CheckedStatefulMonad where
 
 
- -- return val = CST (\m -> (val, m))
- -- (CST c) >>= f = 
- --   CST (\m -> 
- --     let (val, m') = c m in
- --       let CST f' = f val in
- --         f' m'
- --     )
- --       
+return val = CST (\m -> (val, m))
+(CST c) >>= f = 
+  CST (\m -> 
+    let (val, m') = c m in 				--this is where we check the error?
+      let CST f' = f val in
+        f' m'
+    )
+      
 
 
 
