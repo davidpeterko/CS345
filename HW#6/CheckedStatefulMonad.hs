@@ -103,6 +103,10 @@ runStateful (CST c) =
    let (val, mem) = c [] in val
 
 
+
+execute exp = runStateful (evaluate exp [])
+
+
 -- this is from errorchecking
 -- need to modify checked_unary
 checked_unary :: UnaryOp -> Value -> CheckedStateful Value
