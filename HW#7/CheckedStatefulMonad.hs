@@ -11,12 +11,12 @@ import Control.Monad
 --data Stateful t = ST (Memory -> (t, Memory))
 data CheckedStateful t = CST (Memory -> (Checked t, Memory))
 
-instance Functor CheckedStateful where
-    fmap  = liftM
-
-instance Applicative CheckedStateful where
-    pure  = return
-    (<*>) = ap  -- defined in Control.Monad
+--instance Functor CheckedStateful where
+--    fmap  = liftM
+--
+--instance Applicative CheckedStateful where
+--    pure  = return
+--    (<*>) = ap  -- defined in Control.Monad
 
 --stateful monad reference
 instance Monad CheckedStateful where

@@ -5,7 +5,7 @@ import Prelude hiding (LT, GT, EQ, id)
 import Operators
 import Stateful hiding (evaluate)
 
-data Checked a = Good a | Error String | Return Value
+data Checked a = Good a | Error String | Return Value -- added Return Value for HW#7
   deriving Show
 
 evaluate :: Exp -> Env -> Checked Value
