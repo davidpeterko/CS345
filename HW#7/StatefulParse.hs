@@ -757,7 +757,7 @@ happyReduce_6 = happySpecReduce_2  4 happyReduction_6
 happyReduction_6 (HappyAbsSyn4  happy_var_2)
 	_
 	 =  HappyAbsSyn4
-		 (Return happy_var_2
+		 (ReturnExp happy_var_2
 	)
 happyReduction_6 _ _  = notHappyAtAll 
 

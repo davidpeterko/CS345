@@ -6,9 +6,17 @@ import Data.Maybe
 import Stateful hiding (Stateful, evaluate)
 import ErrorChecking hiding (evaluate, checked_unary, checked_binary)
 import Operators
+import Control.Monad
 
 --data Stateful t = ST (Memory -> (t, Memory))
 data CheckedStateful t = CST (Memory -> (Checked t, Memory))
+
+instance Functor CheckedStateful where
+    fmap  = liftM
+
+instance Applicative CheckedStateful where
+    pure  = return
+    (<*>) = ap  -- defined in Control.Monad
 
 --stateful monad reference
 instance Monad CheckedStateful where
@@ -21,7 +29,7 @@ instance Monad CheckedStateful where
 						let CST f' = f goodval in
         					f' m'
 					Error msg -> (Error msg, m')
-					Return retval -> Return (retval, m')
+					Return retval -> (Return retval, m')
     		)
 
 
@@ -85,8 +93,10 @@ evaluate (Call fun arg) env = do
 
 
 -- evaluate return
--- evaluate 
-
+evaluate (ReturnExp x) env = do
+	av <- evaluate x env
+	--_ -> cstHelper(Return av)
+	cstHelper(Return av)
 
 -- mutation operations
 evaluate (Seq a b) env = do
