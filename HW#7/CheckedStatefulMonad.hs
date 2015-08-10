@@ -6,7 +6,7 @@ import Data.Maybe
 import Stateful hiding (Stateful, evaluate)
 import ErrorChecking hiding (evaluate, checked_unary, checked_binary)
 import Operators
-import Control.Monad
+--import Control.Monad
 
 --data Stateful t = ST (Memory -> (t, Memory))
 data CheckedStateful t = CST (Memory -> (Checked t, Memory))
