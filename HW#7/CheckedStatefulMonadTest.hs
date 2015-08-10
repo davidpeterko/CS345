@@ -50,6 +50,15 @@ t17 = parseExp "var f = function(x) { return 6+3 }; f(100)"
 t18 = parseExp "!9"
 t20 = parseExp "var f = function(x) { return 1/0 }; f(1)"
 t21 = parseExp "var f = function(x) { var y = 10; return y + x}; f(50)"
+t22 = parseExp "var f = function(x) { var y = x + 3; return y }; f(7)"
+t23 = parseExp "var f = function(x) { var y = x + 3; return y }; f(15)"
+t24 = parseExp "var f = function(x) { var y = x + 3; return y }; f(22)"
+t25 = parseExp "var f = function(x) { var y = x + 3; return y }; f(5)"
+t26 = parseExp "var f = function(x) { var y = x + 3; return y }; f(50)"
+t27 = parseExp "var f = function(x) { var y = x + 3; return y }; f(44)"
+t28 = parseExp "var f = function(x) { var y = x + 3; return y }; f(35)"
+
+
 
 
 
@@ -74,6 +83,13 @@ main = do
   test "evaluate" execute t18
   test "evaluate" execute t20
   test "evaluate" execute t21
+  test "evaluate" execute t22
+  test "evaluate" execute t23
+  test "evaluate" execute t24
+  test "evaluate" execute t25
+  test "evaluate" execute t26
+  test "evaluate" execute t27
+  test "evaluate" execute t28
 
 -- I combined both tests from StatefulMonadTest.hs and ErrorChecking.hs 
 -- into one file to test my CheckedStatefulMonad.hs into this file called:
