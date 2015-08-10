@@ -21,7 +21,7 @@ instance Monad CheckedStateful where
 						let CST f' = f tempval in
         					f' m'
 					Error msg -> (Error msg, m')
-					Return val -> Return (val, m')
+					Return valu -> Return (valu, m')
     		)
       
 
@@ -31,9 +31,14 @@ cstHelper v = CST (\m -> (v, m))
 --return helper function
 handleReturn :: CheckedStateful Value -> CheckedStateful Value
 handleReturn (CST f) = 
-
-	
-
+	CST (/m ->
+		let (val, m') = f m in
+			case val of 
+				Return retval -> (Good retval, m')    -- conver tReturn values into good values
+				Good goodval -> (Good Undefined, m')  -- good values into undefined values
+				-- need anothjer case of value to be Undefined
+				Error msg -> (Error msg, m')
+	)
 
 --evaluate :: Exp -> Env -> CheckedStateful Value
 --taken from CheckedMonad
@@ -77,8 +82,11 @@ evaluate (Call fun arg) env = do
     ClosureV x body closeEnv -> do
       argv <- evaluate arg env
       let newEnv = (x, argv) : closeEnv
-      evaluate body newEnv
+      handleReturn(evaluate body newEnv) 					-- fix Call function
     _ -> cstHelper(Error ("Expected function but found " ++ show funv))
+
+
+-- do we need a new return statement?
 
 
 -- mutation operations
@@ -111,12 +119,9 @@ runStateful (CST c) =
    let (val, mem) = c [] in val
 
 
-
 execute exp = runStateful (evaluate exp [])
 
-
 -- this is from errorchecking
--- need to modify checked_unary
 checked_unary :: UnaryOp -> Value -> CheckedStateful Value
 checked_unary Not (BoolV b) = cstHelper(Good (BoolV (not b)))
 checked_unary Neg (IntV i)  = cstHelper(Good (IntV (-i)))
