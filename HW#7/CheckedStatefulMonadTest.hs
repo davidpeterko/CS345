@@ -44,7 +44,7 @@ t13 = parseExp "var x = 3; x"
 
 
 t14 = parseExp "var f = function(x) { var y = x + 3; return y }; f(7)"
-t15 = parseExp "var f = function(x) { var y = x * x; return y } f(5)"
+t15 = parseExp "var f = function(x) { var y = x * x; return y }; f(5)"
 t16 = parseExp "var f = function(x) { return x }; f(5)"
 t17 = parseExp "var f = function(x) { return 6+3 }; f(100)"
 
