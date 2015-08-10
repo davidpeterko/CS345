@@ -47,6 +47,12 @@ t14 = parseExp "var f = function(x) { var y = x + 3; return y }; f(7)"
 t15 = parseExp "var f = function(x) { var y = x * x; return y }; f(5)"
 t16 = parseExp "var f = function(x) { return x }; f(5)"
 t17 = parseExp "var f = function(x) { return 6+3 }; f(100)"
+t18 = parseExp "!9"
+t19 = parseExp "if(3 > 6) return 3; else return 6"
+t20 = parseExp "var f = function(x) { return 1/0 }; f(1)"
+t21 = parseExp "var f = function(x) { if (x > 5) return x; else return x*x }; f(4)"
+t22 = parseExp "var f = function(x) { if (x > 5) return x; else return x*x }; f(6)"
+
 
 
 
