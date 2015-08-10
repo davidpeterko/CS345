@@ -38,17 +38,6 @@ handleReturn (CST f) =
 				Error msg -> (Error msg, m')
     )
 
---return helper function
---handleReturn :: CheckedStateful Value -> CheckedStateful Value
---handleReturn (CST f) = 
---	CST (/m ->
---		let (val, m') = f m in
---			case val of 
---				Return retval -> (Good retval, m')    -- conver tReturn values into good values
---				Good goodval -> (Good Undefined, m')  -- good values into undefined values
---				-- need anothjer case of value to be Undefined
---				Error msg -> (Error msg, m')
---	)
 
 evaluate :: Exp -> Env -> CheckedStateful Value
 
