@@ -43,6 +43,13 @@ t13 = parseExp "var x = 3; x"
 --t19 = parseExp "if (8 + false) 10 else 55"
 
 
+t14 = parseExp "var f = function(x) { var y = x + 3; return y }; f(7)"
+t15 = parseExp "var f = function(x) { var y = x * x; return y } f(5)"
+t16 = parseExp "var f = function(x) { return x }; f(5)"
+t17 = parseExp "var f = function(x) { return 6+3 }; f(100)"
+
+
+
 main = do
   test "evaluate" execute t1
   test "evaluate" execute t2
@@ -57,10 +64,10 @@ main = do
   test "evaluate" execute t11
   --test "evaluate" execute t12
   test "evaluate" execute t13
-  --test "evaluate" execute t14
-  --test "evaluate" execute t15
-  --test "evaluate" execute t16
-  --test "evaluate" execute t17
+  test "evaluate" execute t14
+  test "evaluate" execute t15
+  test "evaluate" execute t16
+  test "evaluate" execute t17
   --test "evaluate" execute t18
   --test "evaluate" execute t19
 
