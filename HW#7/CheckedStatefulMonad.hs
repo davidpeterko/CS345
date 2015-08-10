@@ -30,18 +30,26 @@ cstHelper v = CST (\m -> (v, m))
 
 --return helper function
 handleReturn :: CheckedStateful Value -> CheckedStateful Value
-handleReturn (CST f) = 
-	CST (/m ->
-		let (val, m') = f m in
-			case val of 
-				Return retval -> (Good retval, m')    -- conver tReturn values into good values
-				Good goodval -> (Good Undefined, m')  -- good values into undefined values
-				-- need anothjer case of value to be Undefined
+handleReturn (CST f) =
+  	CST (\m -> 
+    	let (val, m') = c m in 				--this is where we check the error?
+			case val of
+    			Return retval -> (Good retval, m')    -- convert Return valuyes into good values
+				Good goodval -> (Good Undefined, m')  -- good values in undefined values
 				Error msg -> (Error msg, m')
-	)
+				-- need another case of value to be Undefined
+			)
 
---evaluate :: Exp -> Env -> CheckedStateful Value
---taken from CheckedMonad
+--handleReturn (CST f) = 
+--	CST (/m ->
+--		let (val, m') = f m in
+--			case val of 
+--				Return retval -> (Good retval, m')    -- conver tReturn values into good values
+--				Good goodval -> (Good Undefined, m')  -- good values into undefined values
+--				-- need anothjer case of value to be Undefined
+--				Error msg -> (Error msg, m')
+--	)
+
 evaluate :: Exp -> Env -> CheckedStateful Value
 
 evaluate (Literal v) env     = return v
