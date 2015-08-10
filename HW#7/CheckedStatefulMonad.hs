@@ -15,27 +15,27 @@ instance Monad CheckedStateful where
 	return val = CST (\m -> (Good val, m))
 	(CST c) >>= f = 
   		CST (\m -> 
-    		let (val, m') = c m in 				--this is where we check the error?
+    		let (val, m') = c m in 				
 				case val of
-					Good tempval -> 
-						let CST f' = f tempval in
+					Good goodval -> 
+						let CST f' = f goodval in
         					f' m'
 					Error msg -> (Error msg, m')
-					Return valu -> Return (valu, m')
+					Return retval -> Return (retval, m')
     		)
-      
+
 
 --helper function
 cstHelper v = CST (\m -> (v, m))
 
 handleReturn :: CheckedStateful Value -> CheckedStateful Value
 handleReturn (CST f) = 
-  CST (\m ->
-    let (cv, m') = f m in
-      case cv of
-        Return v  -> (Good v, m')
-        Good v    -> (Good Undefined, m')
-        Error msg -> (Error msg, m')
+	CST (\m ->
+		let (val, m') = f m in
+			case val of
+				Return retval -> (Good retval, m')
+				Good goodval -> (Good Undefined, m')
+				Error msg -> (Error msg, m')
     )
 
 --return helper function
