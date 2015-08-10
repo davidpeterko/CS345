@@ -74,8 +74,11 @@ main = do
   test "evaluate" execute t15
   test "evaluate" execute t16
   test "evaluate" execute t17
-  --test "evaluate" execute t18
-  --test "evaluate" execute t19
+  test "evaluate" execute t18
+  test "evaluate" execute t19
+  test "evaluate" execute t20
+  test "evaluate" execute t21
+  test "evaluate" execute t22
 
 -- I combined both tests from StatefulMonadTest.hs and ErrorChecking.hs 
 -- into one file to test my CheckedStatefulMonad.hs into this file called:
