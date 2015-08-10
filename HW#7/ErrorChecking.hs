@@ -4,7 +4,7 @@ import Prelude hiding (LT, GT, EQ, id)
 import FirstClassFunctions hiding (evaluate)
 import Operators
 
-data Checked a = Good a | Error String
+data Checked a = Good a | Error String | Return Value
   deriving Show
 
 evaluate :: Exp -> Env -> Checked Value

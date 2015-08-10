@@ -9,6 +9,7 @@ data Value = IntV  Int
            | BoolV Bool
            | ClosureV String Exp Env
            | AddressV Int        -- new
+		   | Undefined
   deriving (Eq, Show)
 
 type Memory = [Value]
@@ -33,7 +34,8 @@ data Exp = Literal   Value
          | Seq       Exp Exp
          | Mutable   Exp         -- new
          | Access    Exp         -- new
-         | Assign    Exp Exp   -- new
+         | Assign    Exp Exp   	 -- new
+		 | ReturnExp Exp  		 -- to avoid clash
   deriving (Eq, Show)
   
 type Env = [(String, Value)]

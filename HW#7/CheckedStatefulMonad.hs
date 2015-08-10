@@ -28,6 +28,7 @@ instance Monad CheckedStateful where
 --helper function
 cstHelper v = CST (\m -> (v, m))
 
+-- handleReturn function
 handleReturn :: CheckedStateful Value -> CheckedStateful Value
 handleReturn (CST f) = 
 	CST (\m ->
@@ -65,7 +66,7 @@ evaluate (Variable x) env    =
     Nothing -> cstHelper(Error ("Variable " ++ x ++ " undefined"))
     Just v  -> return v
 
-evaluate (Declare x e body) env = do    -- non-recursive case
+evaluate (Declare x e body) env = do   	 -- non-recursive case
   ev <- evaluate e env
   let newEnv = (x, ev) : env
   evaluate body newEnv
@@ -79,11 +80,12 @@ evaluate (Call fun arg) env = do
     ClosureV x body closeEnv -> do
       argv <- evaluate arg env
       let newEnv = (x, argv) : closeEnv
-      handleReturn(evaluate body newEnv) 					-- fix Call function
+      handleReturn(evaluate body newEnv) -- fix Call function
     _ -> cstHelper(Error ("Expected function but found " ++ show funv))
 
 
--- do we need a new return statement?
+-- evaluate return
+-- evaluate 
 
 
 -- mutation operations
@@ -105,7 +107,6 @@ evaluate (Assign a e) env = do
   updateMemory ev i
 
 
--- memory helpers, to be checked do you add a good?
 newMemory val = CST (\mem->( Good (AddressV (length mem)), mem ++ [val]))
 
 readMemory i = CST (\mem-> (Good (access i mem), mem))

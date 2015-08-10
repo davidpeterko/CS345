@@ -49,7 +49,6 @@ Exp : function '(' id ')' '{' Exp '}'  				{ Function $3 $6 }
     | if '(' Exp ')' '{' Exp '}' else '{' Exp '}'  	{ If $3 $6 $10 }
     | Exp ';' Exp                      				{ Seq $1 $3 }
     | Assign                           				{ $1 }
-    | return Assign							   		{ Return $2 }
 	| return Exp							   		{ Return $2 }
 
 Assign : Or '=' Assign    { Assign $1 $3 }
