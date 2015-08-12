@@ -1,0 +1,71 @@
+Javascript
+
+Asg #8
+
+Your assignment is to implement a subset of the Javascript object model. Extending your code for Exercise 7. I will distribute base code by Tuesday.
+
+Implement records by adding syntax, and extending the abstract syntax  
+	var r = { a: 3, 
+			  b: 5, 
+			  m: function() {return this.p() + 3}, 
+			  p: function() {return 2}}
+
+Add access syntax:
+	r.a + r.b * r.m()
+If the field is not defined in the record, then look in the prototype.
+If the field is not found anywhere, then return "undefined"
+
+Support a "prototype" field.
+	var p = { a: 10,
+			  m: function() {return this.a + 99}
+			};
+	
+	var c = { a: 1,
+			  prototype: p
+			};
+
+	c.m() -- returns 100
+	p.m() -- returns 109
+
+Add "this" keyword and implement it in functions. It should be automatically bound when calling r.m(). "this" should be equal to "r" inside the execution of "m".
+
+Allow functions to have empty parameter list, and records to be empty. Maybe base it on HW#6 or 7.
+
+Implicitly convert AddressV values into their contents when appropriate.
+In binary operators, prototypes, and functions.
+	
+	var a = mutable 10;
+	a + 1;
+
+As a test, you should be able to implement these objects:
+
+	var Counter = function(init){
+			var count = mutable init;
+			return {
+				inc: function() {count = count + 1}
+				get: function() {return @count}
+			}
+	}
+
+	var BigCounter = function(init){
+		var parent = Counter(init);
+		return{
+			prototype: parent,
+			get: function() {return 2 * this.prototype.get()}
+		}
+	}
+
+	var c = Counter(1);
+	var bc = BigCounter(1);
+	c.inc(); c.inc();
+	bc.inc(); bc.inc();
+	{ c: c.get(), bc: bc.get() }
+
+Should produce Good (RecordV [("c", IntV 3), ("bc", IntV 14)])
+
+Another example:
+
+	var f = function(a) { return a + this.g() };
+	var g = function(b) { return b * b };
+	var r = { f:f, g:g };
+	r.f(10)

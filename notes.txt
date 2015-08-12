@@ -1,0 +1,35 @@
+var stream = function(x) {
+	
+	return {
+		current = function(){ return x }
+		next = function(){ return stream(x + 1) }
+	}
+}
+
+var s1 = stream(1);
+var s2 = s1.next().next().next();
+s2.current();
+
+data Value = IntV Int
+		   | BoolV Bool
+		   | ClosureV String Exp Env
+		   | AddressV Int
+		   | Undefined
+		   | ObjectV Env
+
+
+need syntax for the dot notation
+
+To implement method called, "o.m(arg)"
+
+evaluate (Call (Field obj method) arg) env = do
+	ov <- evaluate obj env
+	av <- evaluate arg env
+	-- make sur ethats an object
+	fun <- checkedToCST (lookupField ov method)
+	--make sure that fun is a closure
+	--call the function, adding "(this", ov) to the nvironment
+
+
+lookupField :: Value -> String -> Checked Value
+	--define recursive look up that handles "prototype" field
