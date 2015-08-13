@@ -13,7 +13,7 @@ data Value = IntV  Int
            | ClosureV String Exp Env
            | AddressV Int        -- new
 	   	   | Undefined
-		   | ObjectV Exp String
+		   | ObjectV Env
   deriving (Eq, Show)
 
 type Memory = [Value]

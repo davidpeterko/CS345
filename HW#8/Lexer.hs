@@ -4,10 +4,10 @@ import Data.Char
 import Data.List
 
 data Token = Digits Int
-           | Symbol String
-           | TokenKeyword String
-           | TokenIdent String
-   deriving Show
+| Symbol String
+| TokenKeyword String
+| TokenIdent String
+deriving Show
 
 lexer :: [String] -> [String] -> String -> [Token]
 lexer symbols keywords str = lex str where
@@ -16,22 +16,22 @@ lexer symbols keywords str = lex str where
     | isSpace c = lex cs
     | isAlpha c || c == '_' = lexAlpha keywords (c:cs)
     | isDigit c = lexDigits (c:cs)
-    | True      = lexSym symbols (c:cs)
+    | True = lexSym symbols (c:cs)
 
   lexSym :: [String] -> String -> [Token]
   lexSym (s:ss) cs = 
     case stripPrefix s cs of
       Nothing -> lexSym ss cs
-      Just rest  -> Symbol s : lex rest  
+      Just rest -> Symbol s : lex rest 
   lexSym [] (c:cs) = error ("Unrecognized symbol '" ++ [c] ++ "'")
-  
+
   lexDigits cs = Digits (read num) : lex rest
     where (num, rest) = span isDigit cs
-  
+
   lexAlpha keywords str = token : lex rest where 
     (first, rest) = span (\c-> isAlphaNum c || c == '_') str
     token = if elem first keywords 
-            then TokenKeyword first
-            else TokenIdent first
+               then TokenKeyword first
+               else TokenIdent first
 
 happyError t = error ("Parse error at " ++ show t ++ "\n")
