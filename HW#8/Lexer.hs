@@ -14,7 +14,7 @@ lexer symbols keywords str = lex str where
   lex [] = []
   lex (c:cs) 
     | isSpace c = lex cs
-    | isAlpha c = lexAlpha keywords (c:cs)
+    | isAlpha c || c == '_' = lexAlpha keywords (c:cs)
     | isDigit c = lexDigits (c:cs)
     | True      = lexSym symbols (c:cs)
 
@@ -29,7 +29,7 @@ lexer symbols keywords str = lex str where
     where (num, rest) = span isDigit cs
   
   lexAlpha keywords str = token : lex rest where 
-    (first, rest) = span isAlphaNum str
+    (first, rest) = span (\c-> isAlphaNum c || c == '_') str
     token = if elem first keywords 
             then TokenKeyword first
             else TokenIdent first

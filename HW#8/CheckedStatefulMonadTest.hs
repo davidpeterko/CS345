@@ -31,6 +31,18 @@ t6 = parseExp ("var x = mutable 3; "++
 t7 = parseExp ("var m = function(x) { return mutable x }; "++
                "@m(3)")
 
+t8 = parseExp ("var m = function() { return mutable 99 }; "++
+               "@m()")
+
+t9 = parseExp ("var m = function() { return function () { return 76 } }; "++
+               "m()()")
+
+t10 = parseExp ("var m = function() { return _ }; "++
+               "m()")
+
+t11 = parseExp ("var m = function(x) { return x }; "++
+               "m()")
+
 
 main = do
   test "evaluate" execute t1
@@ -40,3 +52,7 @@ main = do
   test "evaluate" execute t5
   test "evaluate" execute t6
   test "evaluate" execute t7
+  test "evaluate" execute t8
+  test "evaluate" execute t9
+  test "evaluate" execute t10
+  test "evaluate" execute t11

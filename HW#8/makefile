@@ -4,7 +4,6 @@ test:
 
 happycompile:
 	./happy StatefulParse.y
-	./happy FirstClassFunctionsParse.y
 
 clean:
 	rm -f StatefulParse.hs

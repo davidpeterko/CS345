@@ -53,8 +53,8 @@ Exp2 : function '(' OptId ')' '{' Exp '}'  { Function $3 $6 }
     | Assign                           { $1 }
     | return Exp2		       { ReturnExp $2 }
 
-OptId : id                { $1 }
-	  |                   { "_" }
+OptId : id   		  { $1 }
+      |                   { "_" }
 
 Assign : Or '=' Assign    { Assign $1 $3 }
        | Or               { $1 }
@@ -89,13 +89,13 @@ Primary : '-' Primary2    { Unary Neg $2 }
 Primary2 : digits         { Literal (IntV $1) }
         | true           { Literal (BoolV True) }
         | false          { Literal (BoolV False) }
-		| undefined 	 { Literal Undefined }
+	| undefined 	 { Literal Undefined }
         | id             { Variable $1 }
         | '(' Exp ')'    { $2 }
-		| Primary2 '(' OptExp ')' { Call $1 $3 } 
-		
-OptExp : Exp             { $1 }
-	   | 				 { Literal Undefined }
+	| Primary2 '(' OptExp ')' { Call $1 $3 } 
+
+OptExp : Exp   		  { $1 }
+       |                  { Literal Undefined }
 
 {
 

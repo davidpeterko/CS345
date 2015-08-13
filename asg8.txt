@@ -69,3 +69,4 @@ Another example:
 	var g = function(b) { return b * b };
 	var r = { f:f, g:g };
 	r.f(10)
+
