@@ -43,6 +43,7 @@ data Exp = Literal   Value
 		 | ObjectExp [(String, Exp)]
 		 | ObjAccess Exp String
 		 | This
+		 | Field Exp Function
 		-- Field Exp Exp ? or Field Exp Function
   deriving (Eq, Show)
   
