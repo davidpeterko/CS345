@@ -67,9 +67,8 @@ instance Monad CheckedStateful where
 
 -- define recursive lookup that handles prototype field
 lookupField :: Value -> String -> Checked Value
-lookupField (Field fone ftwo) varname = do
-	--what to do?
-	
+lookupField (Field fone ftwo) str = do
+	val <- evaluate str	
 	
 
 
