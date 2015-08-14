@@ -49,7 +49,7 @@ t13 = parseExp "var r = {a:5}; var s = {prototype:r}; r.a + s.a"
 
 t14 = parseExp "var r = { a:3}; r"
 
-t15 = parseExp "var r = { a: 4, b:8, c: 12}; r.a + r.b + r.c"
+t15 = parseExp "var r = { a: 4 }; var s = {b: 10}; r.a + s.b" 
 
 main = do
   test "evaluate" execute t1
