@@ -126,8 +126,15 @@ evaluate (Call (Field obj method) arg) env = do
 	av <- evaluate arg env
 	case lookup ov env of
 		Nothing -> myError("Object " ++ ov ++ " undefined")
-		Just v -> return v
+		Just v -> Good v
 	fun <- checkedToCST (lookupField ov method)
+	case fun of
+		ClosureV x body closeEnv -> do
+			argv <- evaluate arg env
+			let newEnv = (x, argv) : closeEnv
+			handleReturn (evaluate body newEnv)
+		_ -> myError ("Expected function but found " ++ show fun)
+			
 	
 	-- make sure that fun is a closure
 	-- call the function, add ("this", ov) to the environment
