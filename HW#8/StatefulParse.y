@@ -44,18 +44,13 @@ import Operators
 	'.'    { Symbol "." }   		-- added the . syntax
 	this   { TokenKeyword "this" }  -- added this keyword
 	':'    { Symbol ":" }           -- added : syntax
-	','    { Symbol "," }           -- added , syntax
+	','    { Symbol "," }           -- added , syntax, where to add this in the syntax?
 	
-	
-	
-
-
-
 %%
 
 Exp : Exp2 ';' Exp                      { Seq $1 $3 }
     | Exp2 								{ $1 }
-	| 'this' 							{ This }         -- for this
+	| this 								{ This }         -- for this
 	| Exp '.' id 						{ Field $1 $3 }  -- for the . operator
 	| id ':' Exp 						{ ObjectExp $1 $3 }   -- for the : operator
 

@@ -75,7 +75,7 @@ lookupField (Field exp method) env = do
 		_ -> return Undefined
 
 
--- unwind function, this monadic function recursively walks through and builds our new OBjectV value
+-- unwind function, this monadic function recursively walks through and builds our new OBjectV value, where to use ths function?
 evalObj :: [(String, Exp)] -> Env -> CheckedStateful Value
 evalObj [] env = return (ObjectV [])
 evalObj ((xstr, xexp) : xs) env = do
@@ -125,9 +125,18 @@ evaluate (ReturnExp a) env = do
 
 evaluate (Call (Field obj method) arg) env = do
 	ov <- evaluate obj env
-	av <- evaluate arg env
-	-- make sure thats an object
+	av <- evaluate arg env -- make sure thats an object
+	case lookup ov env of
+		Nothing -> myError("Object " ++ ov ++ " undefined")
+		Just v -> return v
 	fun <- checkedToCST (lookupField ov method)
+	case fun of
+		ClosureV x body closeEnv -> case Field obj method of
+			Field obj method -> do
+				rec <- evaluate obj env
+				case rec of
+					ObjectExp objexp -> evaluate (("this", ov):(closeEnv ++ env))
+					_-> evaluate (closeEnv ++ env)
 	-- make sure that fun is a closure
 	-- call the function, add ("this", ov) to the environment
 
