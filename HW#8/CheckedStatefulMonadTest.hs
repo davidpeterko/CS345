@@ -45,6 +45,10 @@ t11 = parseExp ("var m = function(x) { return x }; "++
 
 t12 = parseExp "var r = { a:3}; r.a"
 
+t13 = parseExp "var r = {a:5}; var s = {prototype:r}; r.a + s.a"
+
+t14 = parseExp "var r = { a:3}; r"
+
 main = do
   test "evaluate" execute t1
   test "evaluate" execute t2
@@ -58,3 +62,5 @@ main = do
   test "evaluate" execute t10
   test "evaluate" execute t11
   test "evaluate" execute t12
+  test "evaluate" execute t13
+  test "evaluate" execute t14
