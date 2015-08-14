@@ -14,6 +14,7 @@ data Value = IntV  Int
            | AddressV Int        -- new
 	   	   | Undefined
 		   | ObjectV Env
+		   | Field Exp Exp
   deriving (Eq, Show)
 
 type Memory = [Value]
@@ -43,8 +44,7 @@ data Exp = Literal   Value
 		 | ObjectExp [(String, Exp)]
 		 | ObjAccess Exp String
 		 | This
-		 | Field  	 Exp Exp
-		-- Field Exp Exp ? or Field Exp Function
+		-- Field Exp Exp
   deriving (Eq, Show)
   
 type Env = [(String, Value)]
@@ -67,13 +67,10 @@ instance Monad CheckedStateful where
 
 -- define recursive lookup that handles prototype field
 lookupField :: Value -> String -> Checked Value
-lookupField (Field exp method) env = do	
-	proto <- evaluate exp env
-	case proto of
-		ObjectExp oexp -> case lookup (evaluate method) oexp of
-			Nothing -> return Undefined
-			Just v -> return v
-		_ -> return Undefined
+lookupField (Field fone ftwo) varname = do
+	--what to do?
+	
+	
 
 
 -- unwind function, this monadic function recursively walks through and builds our new OBjectV value, where to use ths function?
@@ -125,19 +122,13 @@ evaluate (ReturnExp a) env = do
 
 
 evaluate (Call (Field obj method) arg) env = do
-	ov <- evaluate obj env
-	av <- evaluate arg env -- make sure thats an object
+	ov <- evaluate obj env -- make sure its an object
+	av <- evaluate arg env
 	case lookup ov env of
 		Nothing -> myError("Object " ++ ov ++ " undefined")
 		Just v -> return v
 	fun <- checkedToCST (lookupField ov method)
-	case fun of
-		ClosureV x body closeEnv -> case Field obj method of
-			Field obj method -> do
-				rec <- evaluate obj env
-				case rec of
-					ObjectExp objexp -> evaluate (("this", ov):(closeEnv ++ env))
-					_-> evaluate (closeEnv ++ env)
+	
 	-- make sure that fun is a closure
 	-- call the function, add ("this", ov) to the environment
 
