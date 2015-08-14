@@ -3,7 +3,7 @@ test:
 
 
 happycompile:
-	./happy StatefulParse.y
+	happy StatefulParse.y
 
 clean:
 	rm -f StatefulParse.hs

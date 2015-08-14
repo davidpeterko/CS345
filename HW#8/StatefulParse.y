@@ -41,24 +41,29 @@ import Operators
     ')'    { Symbol ")" }
     '{'    { Symbol "{" }
     '}'    { Symbol "}" }
-	'.'    { Symbol "." }   		-- added the . syntax
-	this   { TokenKeyword "this" }  -- added this keyword
-	':'    { Symbol ":" }           -- added : syntax
-	','    { Symbol "," }           -- added , syntax, where to add this in the syntax?
+	'.'    { Symbol "." }   		
+	this   { TokenKeyword "this" }  
+	':'    { Symbol ":" }           
+	','    { Symbol "," }          
 	
 %%
 
 Exp : Exp2 ';' Exp                      { Seq $1 $3 }
     | Exp2 								{ $1 }
-	| this 								{ This }         -- for this
-	| Exp '.' id 						{ Field $1 $3 }  -- for the . operator
-	| id ':' Exp 						{ ObjectExp $1 $3 }   -- for the : operator
 
 Exp2 : function '(' OptId ')' '{' Exp '}'  			{ Function $3 $6 }
     | var id '=' Exp2 ';' Exp          				{ Declare $2 $4 $6 }
     | if '(' Exp2 ')' '{' Exp '}' else '{' Exp '}'  { If $3 $6 $10 }
     | Assign                          				{ $1 }
     | return Exp2		       						{ ReturnExp $2 }
+	| id '=' Record 								{ ObjectExp $3 }
+
+Bind : id ':' Exp             						{ $1 : $3 }
+
+Bindings : Bind               						{ [$1] }
+         | Bind ',' Bindings  						{ $1 : $3 }
+
+Record : '{' Bindings '}' 							{ $2 } 
 
 OptId : id   		  	  { $1 }
       |                   { "_" }

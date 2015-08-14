@@ -121,10 +121,13 @@ evaluate (ReturnExp a) env = do
 
 evaluate (Call (Field obj method) arg) env = do
 	ov <- evaluate obj env -- make sure its an object
-	av <- evaluate arg env
-	case lookup ov env of
-		Nothing -> myError("Object " ++ ov ++ " undefined")
-		Just v -> Good v
+	--av <- evaluate arg env
+	case ov of
+		ObjectV objectenv -> 
+		_ -> myError("Object " ++ ov ++ " undefined")
+	--case lookup ov env of
+	--	Nothing -> myError("Object " ++ ov ++ " undefined")
+	--	Just v -> Good v
 	fun <- checkedToCST (lookupField ov method)
 	case fun of
 		ClosureV x body closeEnv -> do
@@ -134,7 +137,7 @@ evaluate (Call (Field obj method) arg) env = do
 		_ -> myError ("Expected function but found " ++ show fun)
 			
 	
-	-- make sure that fun is a closure
+	-- make sure that fun is a ClosureV
 	-- call the function, add ("this", ov) to the environment
 
 
