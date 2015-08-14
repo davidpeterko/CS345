@@ -61,7 +61,7 @@ Bind : id ':' Exp             						{ ($1, $3) }
 
 Bindings : Bind               						{ [$1] }
          | Bind ',' Bindings  						{ $1 : $3 }
-
+		 | Bind ',' Bind 							{ $1 $3}
 Record : '{' Bindings '}' 							{ $2 } 
 
 OptId : id   		  	  { $1 }
