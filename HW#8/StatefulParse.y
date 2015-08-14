@@ -55,7 +55,7 @@ Exp2 : function '(' OptId ')' '{' Exp '}'  			{ Function $3 $6 }
     | if '(' Exp2 ')' '{' Exp '}' else '{' Exp '}'  { If $3 $6 $10 }
     | Assign                          				{ $1 }
     | return Exp2		       						{ ReturnExp $2 }
-	| Record 										{ ObjectExp $3 }
+	| Record 										{ ObjectExp $1 }
 
 Bind : id ':' Exp             						{ ($1, $3) }
 

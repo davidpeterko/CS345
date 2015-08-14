@@ -62,17 +62,17 @@ instance Monad CheckedStateful where
       )
 
 
--- define recursive lookup that handles prototype field
+--define recursive lookup that handles prototype field
 lookupField :: Value -> String -> Checked Value
 lookupField (ObjectV env) str = do
 	case lookup str env of
 		Nothing -> 
 			case lookup "prototype" env of
 				Just v -> lookupField v str 
-				Nothing -> myError("No prototype found.")
+				Nothing -> Error ("No prototype found.")
 		Just v -> Good v
-lookupField _ = 
-	myError ("Not an object.")
+--lookupField _ _ = 
+--	myError ("Not an object.")
 			
 	
 -- unwind function, this monadic function recursively walks through and builds our new OBjectV value, where to use ths function?
@@ -86,6 +86,11 @@ evalObj ((xstr, xexp) : xs) env = do
 
 evaluate :: Exp -> Env -> CheckedStateful Value
 -- basic operations
+evaluate (ObjectExp ov) env = do
+	evalObj ov env
+evaluate (ObjAccess arg method) env = do
+	av <- evaluate arg env
+	checkedToCST ( lookupField av method )
 evaluate (Literal l) env = return l
 evaluate (Unary op a) env = do
   av <- evaluate a env
@@ -130,7 +135,7 @@ evaluate (Call (ObjAccess obj method) arg) env = do
 	case fun of
 		ClosureV x body closeEnv -> do
 			argv <- evaluate arg env
-			let newEnv = (x, argv) ("this", ov) : closeEnv
+			let newEnv = (x, argv) : ("this", ov) : closeEnv
 			handleReturn (evaluate body newEnv)
 		_ -> myError ("Expected function but found " ++ show fun)
 
