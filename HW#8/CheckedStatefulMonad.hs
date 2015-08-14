@@ -14,7 +14,6 @@ data Value = IntV  Int
            | AddressV Int        -- new
 	   	   | Undefined
 		   | ObjectV Env
-		   | Field Exp Exp
   deriving (Eq, Show)
 
 type Memory = [Value]
@@ -43,8 +42,6 @@ data Exp = Literal   Value
 	 	 | ReturnExp Exp
 		 | ObjectExp [(String, Exp)]
 		 | ObjAccess Exp String
-		 | This
-		-- Field Exp Exp
   deriving (Eq, Show)
   
 type Env = [(String, Value)]
@@ -67,10 +64,17 @@ instance Monad CheckedStateful where
 
 -- define recursive lookup that handles prototype field
 lookupField :: Value -> String -> Checked Value
-lookupField (Field fone ftwo) str = do
+lookupField (ObjectV env) str = do
+	case lookup str env of
+		Nothing -> 
+			case lookup "prototype" env of
+				Just v -> lookupField v str 
+				Nothing -> myError("No prototype found.")
+		Just v -> Good v
+lookupField _ = 
+	myError ("Not an object.")
+			
 	
-
-
 -- unwind function, this monadic function recursively walks through and builds our new OBjectV value, where to use ths function?
 evalObj :: [(String, Exp)] -> Env -> CheckedStateful Value
 evalObj [] env = return (ObjectV [])
@@ -119,26 +123,16 @@ evaluate (ReturnExp a) env = do
   checkedToCST (Return av)
 
 
-evaluate (Call (Field obj method) arg) env = do
+evaluate (Call (ObjAccess obj method) arg) env = do
 	ov <- evaluate obj env -- make sure its an object
-	--av <- evaluate arg env
-	case ov of
-		ObjectV objectenv -> 
-		_ -> myError("Object " ++ ov ++ " undefined")
-	--case lookup ov env of
-	--	Nothing -> myError("Object " ++ ov ++ " undefined")
-	--	Just v -> Good v
+	--case ov of
 	fun <- checkedToCST (lookupField ov method)
 	case fun of
 		ClosureV x body closeEnv -> do
 			argv <- evaluate arg env
-			let newEnv = (x, argv) : closeEnv
+			let newEnv = (x, argv) ("this", ov) : closeEnv
 			handleReturn (evaluate body newEnv)
 		_ -> myError ("Expected function but found " ++ show fun)
-			
-	
-	-- make sure that fun is a ClosureV
-	-- call the function, add ("this", ov) to the environment
 
 
 -- mutation operations

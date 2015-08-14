@@ -42,7 +42,6 @@ import Operators
     '{'    { Symbol "{" }
     '}'    { Symbol "}" }
 	'.'    { Symbol "." }   		
-	this   { TokenKeyword "this" }  
 	':'    { Symbol ":" }           
 	','    { Symbol "," }          
 	
@@ -56,9 +55,9 @@ Exp2 : function '(' OptId ')' '{' Exp '}'  			{ Function $3 $6 }
     | if '(' Exp2 ')' '{' Exp '}' else '{' Exp '}'  { If $3 $6 $10 }
     | Assign                          				{ $1 }
     | return Exp2		       						{ ReturnExp $2 }
-	| id '=' Record 								{ ObjectExp $3 }
+	| Record 										{ ObjectExp $3 }
 
-Bind : id ':' Exp             						{ $1 : $3 }
+Bind : id ':' Exp             						{ ($1, $3) }
 
 Bindings : Bind               						{ [$1] }
          | Bind ',' Bindings  						{ $1 : $3 }
@@ -105,6 +104,7 @@ Primary2 : digits         			{ Literal (IntV $1) }
         | id             			{ Variable $1 }
         | '(' Exp ')'    			{ $2 }
 		| Primary2 '(' OptExp ')' 	{ Call $1 $3 } 
+		| Primary2 '.' id 			{ ObjAccess $1 $3 }
 
 OptExp : Exp   		 	  { $1 }
        |                  { Literal Undefined }
@@ -112,7 +112,7 @@ OptExp : Exp   		 	  { $1 }
 {
 
 symbols = ["+", "-", "*", "/", "(", ")", "{", "}", ";", "==", "=", "<=", ">=", "<", ">", "||", "&&", "!", "@", ".", ":"]
-keywords = ["function", "var", "if", "else", "true", "false", "mutable", "undefined", "return", "this"]
+keywords = ["function", "var", "if", "else", "true", "false", "mutable", "undefined", "return"] 
 parseExp str = parser (lexer symbols keywords str)
 
 parseInput = do
